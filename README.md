@@ -13,7 +13,9 @@
     Tools • Dart 3.3.1 • DevTools 2.31.1
 
 > Debug
-
+    
+    app% flutter create .
+    app% flutter pub get
     app% flutter run -d chrome
 
 ---
