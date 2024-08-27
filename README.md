@@ -1,5 +1,5 @@
 ### todo_list
-    web 플랫폼을 타겟으로 구현한 프로젝트입니다.
+    web 플랫폼을 타겟으로 구현한 flutter 프로젝트입니다.
 
 > fork
  
