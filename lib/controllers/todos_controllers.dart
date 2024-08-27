@@ -67,6 +67,9 @@ class TodosController extends GetxController {
   }
 
   //todo 상태 변경(drag and drop)
+  void moveTodoToDifferentList(RxMap<String, dynamic> todo, int newType) {
+    todo['type'] = newType;
+  }
   void changeStateTodo(int index, int type) {
     todos[index]['state'] = type;
   }
