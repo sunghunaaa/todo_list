@@ -11,7 +11,8 @@ class TodosController extends GetxController {
   //todo List 기본
   RxList<RxMap<String, dynamic>> todos = <RxMap<String, dynamic>>[
     {
-      'index' : 0,
+      'index': 0,
+      'order': 1,
       'title': '견적서 양식 등록',
       'manager': '김발자',
       'content': '본사에 필요한 견적서 양식을 작성하여 제출한다.',
@@ -20,7 +21,8 @@ class TodosController extends GetxController {
       'done': false
     }.obs,
     {
-      'index' : 1,
+      'index': 1,
+      'order': 1,
       'title': '급한 일정 입니다.',
       'manager': '김발자',
       'content': '본사에 필요한 견적서 양식을 작성하여 제출한다.',
@@ -31,8 +33,17 @@ class TodosController extends GetxController {
   ].obs;
 
   //todo List 추가
-  void addTodo({required String title, required String manager, required String content, required String date}) {
+  void addTodo({
+    required String title,
+    required String manager,
+    required String content,
+    required String date,
+  }) {
     int index = todos.length;
+    int maxOrder = todos
+        .where((todo) => todo['type'] == 0)
+        .map((todo) => todo['order'])
+        .fold(0, (prev, next) => prev > next ? prev : next);
 
     //type default 값은 0
     todos.add({
@@ -42,7 +53,8 @@ class TodosController extends GetxController {
       'content': content == "" ? '내용 없음' : content,
       'date': date == "" ? '날짜 없음' : date,
       'type': 0,
-      'done': false
+      'order': maxOrder + 1,
+      'done': false,
     }.obs);
 
     clearInputs();
@@ -70,7 +82,12 @@ class TodosController extends GetxController {
   void moveTodoToDifferentList(RxMap<String, dynamic> todo, int newType) {
     todo['type'] = newType;
   }
-  void changeStateTodo(int index, int type) {
-    todos[index]['state'] = type;
+
+  void updateTodosOrder(int type, List<RxMap<String, dynamic>> updatedTodos) {
+    for (var todo in updatedTodos) {
+      var originalTodo = todos.firstWhere((t) => t['index'] == todo['index']);
+      originalTodo['order'] = todo['order'];
+    }
+    todos.refresh(); // 업데이트된 순서를 반영
   }
 }
