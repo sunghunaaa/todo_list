@@ -1,5 +1,6 @@
 ### todo_list
     web 플랫폼을 타겟으로 구현한 flutter 프로젝트입니다.
+    기본 todo앱 수정을 제외한 기능을 가지고 있습니다.
 
 > fork
  
