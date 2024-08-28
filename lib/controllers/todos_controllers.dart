@@ -33,12 +33,7 @@ class TodosController extends GetxController {
   ].obs;
 
   //todo List 추가
-  void addTodo({
-    required String title,
-    required String manager,
-    required String content,
-    required String date,
-  }) {
+  void addTodo({required String title,required String manager,required String content,required String date,}) {
     int index = todos.length;
     int maxOrder = todos
         .where((todo) => todo['type'] == 0)
@@ -70,24 +65,36 @@ class TodosController extends GetxController {
   }
 
   //todo 삭제 (보통 실제 데이터를 삭제하지 않고 del_yn의 값을 변경하여 list에 뜨지 않게 함.)
-  void removeTodo(int index) {
-    todos.removeAt(index);
-    //index 재정렬
+  Future<void> removeTodo(int idx) async {
+    todos.removeWhere((todo) => todo['index'] == idx);
+
     for (int i = 0; i < todos.length; i++) {
       todos[i]['index'] = i;
     }
   }
 
-  //todo 상태 변경(drag and drop)
+  //dialog back
+  Future<void> back() async {
+    Get.back();
+  }
+
+  //todo 새로고침
+  void refreshTodo(){
+    todos.refresh();
+  }
+
+  //todo 상태 변경(drag and drop) - 다른 열
   void moveTodoToDifferentList(RxMap<String, dynamic> todo, int newType) {
     todo['type'] = newType;
   }
-
-  void updateTodosOrder(int type, List<RxMap<String, dynamic>> updatedTodos) {
-    for (var todo in updatedTodos) {
+  //todo 상태 변경(drag and drop) - 같은 열
+  void updateTodosOrder(int type, List<RxMap<String, dynamic>> updateTodos) {
+    for (var todo in updateTodos) {
       var originalTodo = todos.firstWhere((t) => t['index'] == todo['index']);
+
       originalTodo['order'] = todo['order'];
     }
-    todos.refresh(); // 업데이트된 순서를 반영
+
+    todos.refresh();
   }
 }
