@@ -40,22 +40,38 @@ Column todosInputTextField() {
         ),
         maxLength: 15,
       ),
-      const SizedBox(height: 20), // 여유 공간 추가
+      const SizedBox(
+        height: 20,
+      ), // 여유 공간 추가
       ElevatedButton(
         onPressed: () {
-          todosController.addTodo(
-            title: todosController.titleController.text,
-            manager: todosController.managerController.text,
-            content: todosController.contentController.text,
-            date: todosController.dateController.text,
-          );
+          //인스턴스 꼬이는 거 임시 방지
+          if (Get.isRegistered<TodosController>()) {
+            todosController.addTodo(
+              title: todosController.titleController.text,
+              manager: todosController.managerController.text,
+              content: todosController.contentController.text,
+              date: todosController.dateController.text,
+            );
+          } else {
+            // 에러 처리 또는 컨트롤러 재등록 로직 추가 가능
+            print('컨트롤러가 해제되었습니다.');
+          }
         },
         style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(const Color(mainColor))),
+          backgroundColor: MaterialStateProperty.all<Color>(
+            const Color(
+              mainColor,
+            ),
+          ),
+        ),
         child: const Text(
           '제출',
-          style: TextStyle(color: Color(blackColor)),
+          style: TextStyle(
+            color: Color(
+              blackColor,
+            ),
+          ),
         ),
       ),
     ],

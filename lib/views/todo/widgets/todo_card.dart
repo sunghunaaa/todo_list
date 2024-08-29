@@ -4,44 +4,13 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:todo_list/controllers/todos_controllers.dart';
 import 'package:todo_list/data/color_source.dart';
-import 'package:todo_list/views/todo_detail/todo_detail.dart';
+import 'package:todo_list/views/todo/todo_detail.dart';
 
 Widget todoCard({required int type}) {
   final TodosController todosController = Get.find();
 
-  void showTodoDetailDialog(RxMap<String, dynamic>? todo) {
-    // 데이터가 null일 경우 다이얼로그를 닫음
-    if (todo == null) {
-      Get.back();
-      return;
-    }
-
-    // 다이얼로그 띄우기
-    Get.defaultDialog(
-      title: todo['title'] ?? 'No Title',
-      content: TodoDetail(
-        index: todo['index'],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Get.back();
-          },
-          child: const Text("확인"),
-        ),
-        TextButton(
-          onPressed: () async {
-            await todosController.removeTodo(todo['index']);
-            todosController.refreshTodo();
-          },
-          child: const Text("삭제"),
-        ),
-      ],
-    );
-  }
-
   return Obx(() {
-    // type으로 item filter 후 order로 정렬
+    //type으로 item filter 후 order로 정렬
     final filteredTodos = todosController.todos
         .where((todo) => todo['type'] == type)
         .toList()
@@ -49,19 +18,21 @@ Widget todoCard({required int type}) {
 
     return ReorderableListView(
       onReorder: (int oldIndex, int newIndex) {
+        //가이드 코드 사용 같은 열 내에서 순서 변경
         if (newIndex > oldIndex) {
           newIndex -= 1;
         }
+
         final movedTodo = filteredTodos.removeAt(oldIndex);
+
         filteredTodos.insert(newIndex, movedTodo);
 
-        // 새로운 순서에 맞게 order 값을 업데이트
+        //order 재 정렬
         for (int i = 0; i < filteredTodos.length; i++) {
           filteredTodos[i]['order'] = i;
         }
 
-        // 새로운 순서를 컨트롤러에 반영
-        todosController.updateTodosOrder(type, filteredTodos);
+        todosController.updateOrder(filteredTodos);
       },
       children: List.generate(
         filteredTodos.length,
@@ -94,13 +65,6 @@ Widget todoCard({required int type}) {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        width: 10.0,
-                        child: Text(
-                          filteredTodos[index]['index'].toString(),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
                       Expanded(
                         child: Text(
                           filteredTodos[index]['title'],
@@ -124,8 +88,7 @@ Widget todoCard({required int type}) {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      width: 10.0,
+                    Expanded(
                       child: Text(
                         filteredTodos[index]['index'].toString(),
                         overflow: TextOverflow.ellipsis,
@@ -143,35 +106,7 @@ Widget todoCard({required int type}) {
                     IconButton(
                       icon: const Icon(Icons.info_outline, color: Colors.black),
                       onPressed: () {
-                        Get.defaultDialog(
-                          title: filteredTodos[index]['title'],
-                          content: TodoDetail(
-                            index: filteredTodos[index]['index'],
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Get.back();
-                              },
-                              child: const Text("확인"),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                await todosController.back();
-                                Future.delayed(
-                                  const Duration(milliseconds: 1000),
-                                  () {
-                                    todosController.removeTodo(
-                                      filteredTodos[index]['index'],
-                                    );
-                                    todosController.refreshTodo();
-                                  },
-                                );
-                              },
-                              child: const Text("삭제"),
-                            ),
-                          ],
-                        );
+                        showTodoDetailDialog(filteredTodos[index]);
                       },
                     ),
                     const SizedBox(
@@ -187,4 +122,46 @@ Widget todoCard({required int type}) {
       ),
     );
   });
+}
+
+//상세보기 dialog로 띄우기
+void showTodoDetailDialog(RxMap<String, dynamic> todo) {
+
+  // 데이터가 null일 경우 다이얼로그를 닫음
+  if (todo == null) {
+    Get.back();
+    return;
+  }
+
+  final TodosController todosController = Get.find();
+
+  Get.defaultDialog(
+    title: todo['title'],
+    content: TodoDetail(
+      index: todo['index'],
+    ),
+    actions: [
+      TextButton(
+        onPressed: () {
+          Get.back();
+        },
+        child: const Text("확인"),
+      ),
+      TextButton(
+        onPressed: () async {
+          await todosController.back();
+          Future.delayed(
+            const Duration(milliseconds: 1000),
+                () {
+              todosController.removeTodo(
+                todo['index'],
+              );
+              todosController.refreshTodo();
+            },
+          );
+        },
+        child: const Text("삭제"),
+      ),
+    ],
+  );
 }

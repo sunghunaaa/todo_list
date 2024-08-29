@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:todo_list/controllers/todos_controllers.dart';
 import 'package:todo_list/data/color_source.dart';
 import 'package:todo_list/data/data_source.dart';
-import 'package:todo_list/views/todo_list/widgets/todo_card.dart';
+import 'package:todo_list/views/todo/widgets/todo_card.dart';
 
 class TodoListGet extends StatelessWidget {
   TodoListGet({super.key, required this.type});
@@ -17,7 +17,7 @@ class TodoListGet extends StatelessWidget {
       child: DragTarget<RxMap<String, dynamic>>(
         onAcceptWithDetails: (details) {
           final receivedTodo = details.data;
-          todosController.moveTodoToDifferentList(receivedTodo, type);
+          todosController.updateType(receivedTodo, type);
         },
         builder: (context, candidateData, rejectedData) {
           return Container(

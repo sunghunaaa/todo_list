@@ -14,7 +14,8 @@ class TodoDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx((){
-      Map<String, dynamic> todo = todosController.todos[index];
+      Map<String, dynamic> todo = todosController.todos.firstWhere((t) => t['index'] == index);
+
 
       return Column(
         mainAxisSize: MainAxisSize.min,

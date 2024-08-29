@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_list/data/color_source.dart';
-import 'package:todo_list/views/todo_list/widgets/todo_list_get.dart';
-import 'package:todo_list/views/todo_list/widgets/todos_input_textfield.dart';
+import 'package:todo_list/views/todo/todo_list_get.dart';
+import 'package:todo_list/views/todo/widgets/todos_input_textfield.dart';
 
 import '../../controllers/todos_controllers.dart';
 
